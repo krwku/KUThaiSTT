@@ -1,0 +1,206 @@
+# Configuration File for Thai STT Auto-Tagger
+# Copy this file to config.json and customize for your needs
+
+{
+  "audio_processing": {
+    "sample_rate": 16000,
+    "target_format": "wav",
+    "mono_channel": true,
+    "normalize_audio": false
+  },
+  
+  "noise_classification": {
+    "thresholds": {
+      "low_noise_snr": 25,
+      "medium_noise_snr": 15,
+      "high_noise_snr": 0
+    },
+    "snr_calculation": {
+      "frame_length": 2048,
+      "hop_length": 512,
+      "noise_percentile": 20
+    }
+  },
+  
+  "speech_clarity": {
+    "features": [
+      "spectral_centroid",
+      "spectral_rolloff",
+      "zero_crossing_rate",
+      "mfcc_statistics",
+      "spectral_flatness"
+    ],
+    "thresholds": {
+      "distorted_flatness": 0.5,
+      "distorted_snr": 10,
+      "muffled_snr": 20,
+      "muffled_mfcc_std": 10
+    }
+  },
+  
+  "voice_activity_detection": {
+    "enabled": true,
+    "top_db": 30,
+    "min_silence_duration": 0.1
+  },
+  
+  "speaking_style": {
+    "features": [
+      "pause_frequency",
+      "pause_duration",
+      "energy_variation",
+      "speaking_rate"
+    ],
+    "thresholds": {
+      "read_speech_pause_rate": 5,
+      "read_speech_energy_var": 0.05,
+      "read_speech_pause_duration": 0.5,
+      "spontaneous_pause_rate": 5,
+      "spontaneous_pause_duration": 0.3
+    }
+  },
+  
+  "transcription": {
+    "enabled": true,
+    "model": {
+      "name": "medium",
+      "language": "th",
+      "task": "transcribe",
+      "fp16": false,
+      "device": "auto"
+    },
+    "options": {
+      "beam_size": 5,
+      "best_of": 5,
+      "temperature": 0.0,
+      "compression_ratio_threshold": 2.4,
+      "logprob_threshold": -1.0,
+      "no_speech_threshold": 0.6
+    }
+  },
+  
+  "text_normalization": {
+    "enabled": true,
+    "pythainlp_available": true,
+    "rules": {
+      "remove_zero_width_spaces": true,
+      "remove_duplicate_spaces": true,
+      "standardize_tone_marks": true,
+      "expand_abbreviations": true,
+      "normalize_numbers": true,
+      "normalize_dates": true,
+      "normalize_currency": true
+    }
+  },
+  
+  "code_switching_detection": {
+    "enabled": true,
+    "thresholds": {
+      "no_switching": 5,
+      "some_switching": 20,
+      "frequent_switching": 100
+    },
+    "character_ranges": {
+      "thai": ["\\u0E00", "\\u0E7F"],
+      "latin": ["a-zA-Z"]
+    }
+  },
+  
+  "vocabulary_analysis": {
+    "enabled": true,
+    "min_keywords_for_classification": 3,
+    "min_keywords_for_mixed": 2,
+    "keyword_lists": {
+      "business": [
+        "roi", "stakeholder", "revenue", "profit", "ผลกำไร", "รายได้",
+        "ธุรกิจ", "การตลาด", "ลงทุน", "หุ้น", "บริษัท", "กำไร",
+        "ผลประกอบการ", "งบการเงิน", "พนักงาน", "ลูกค้า"
+      ],
+      "medical": [
+        "patient", "doctor", "hospital", "ผู้ป่วย", "แพทย์", "โรงพยาบาล",
+        "อาการ", "การรักษา", "โรค", "ยา", "การวินิจฉัย", "อาการ",
+        "ความดันโลหิต", "หัวใจ", "โรคเบาหวาน", "การผ่าตัด"
+      ],
+      "technical": [
+        "database", "server", "code", "algorithm", "deploy", "api",
+        "โปรแกรม", "ระบบ", "เซิร์ฟเวอร์", "คอมพิวเตอร์", "software",
+        "hardware", "ข้อมูล", "เครือข่าย", "ประมวลผล", "แอปพลิเคชัน"
+      ],
+      "legal": [
+        "สัญญา", "กฎหมาย", "ศาล", "คดี", "โจทก์", "จำเลย",
+        "พยาน", "หมายศาล", "ฟ้อง", "ทนายความ", "มาตรา"
+      ]
+    }
+  },
+  
+  "metadata": {
+    "output_directory": "metadata",
+    "format": "json",
+    "include_raw_features": true,
+    "include_confidence_scores": true,
+    "indent": 2,
+    "ensure_ascii": false
+  },
+  
+  "quality_control": {
+    "min_duration": 1.0,
+    "max_duration": 600.0,
+    "min_snr": -10,
+    "min_voice_activity": 10,
+    "flag_low_confidence": true,
+    "low_confidence_thresholds": {
+      "snr": 15,
+      "voice_activity": 30,
+      "transcription_length": 10
+    }
+  },
+  
+  "performance": {
+    "batch_processing": true,
+    "batch_size": 10,
+    "multiprocessing": false,
+    "num_workers": 4,
+    "cache_audio": false,
+    "verbose": true,
+    "progress_bar": true
+  },
+  
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "tagger.log",
+    "console": true
+  },
+  
+  "annotation_guidelines": {
+    "manual_review_required": [
+      "speaker_gender",
+      "dialect",
+      "speaking_style_confirmation",
+      "vocabulary_type_confirmation"
+    ],
+    "manual_review_recommended": [
+      "speech_clarity_when_low_snr",
+      "transcription_accuracy",
+      "code_switching_accuracy"
+    ],
+    "confidence_levels": {
+      "high": ["noise_level", "voice_activity"],
+      "medium": ["speech_clarity", "code_switching"],
+      "low": ["speaking_style", "vocabulary_type"]
+    }
+  },
+  
+  "custom_tags": {
+    "enabled": false,
+    "additional_fields": []
+  },
+  
+  "integration": {
+    "export_formats": ["json", "csv"],
+    "annotation_platform": null,
+    "webhook_url": null,
+    "api_endpoint": null
+  }
+}
